@@ -1,0 +1,246 @@
+// start mongodb -> mongodb
+// start mongo campass -> mongodb-compass
+
+// show all db
+show dbs
+
+// using db
+use {db}
+
+// show current db
+db
+
+// sample data structue
+{
+    first_name: "eddie",
+    last_name: "choi",
+    membership: ["mem1", "mem2"],
+    address: {
+        street: "4 main street",
+        city: "seoul"
+    },
+    contacts: [
+        {name: "brad", relationship: "friend"},
+    ]
+}
+
+
+// create user
+db.createUser({
+    user:"eddie",
+    pwd:"1234",
+    roles:["readWrite", "dbAdmin"]
+});
+
+// db.createCollection collection == table
+db.createCollection('customer');
+
+
+// show collection
+show collections
+
+
+// insert data into collection
+db.customer.insert({
+    first_name: "eddie",
+    last_name: "choi",
+});
+
+
+// find data
+db.customer.find();
+
+// find data pretty
+db.customer.find().pretty();
+
+
+// insert numerous data
+db.customer.insert([
+    {
+        first_name: "kim",
+        last_name: "sally",
+    },
+    {
+        first_name: "chris",
+        last_name: "evan",
+    }
+]);
+
+// update the data
+db.customer.update(
+    // match with the first_name
+    {
+        first_name:"eddie"
+    },
+    // wants to replace the whole field
+    {
+        first_name:"eddie",
+        last_name:"choi",
+        gender:"male",
+    }
+);
+
+// update with 
+db.customer.update(
+    {
+        first_name:"joe"
+    },
+    // replace and update specific field
+    {
+        $set:{gender:"male"}
+    }
+);
+
+db.customer.update(
+    {
+        first_name:"joe"
+    },
+    {
+        $set:{age:45}
+    }
+);
+
+// increment
+db.customer.update({first_name:"joe"}, {$inc:{age:5}});
+
+
+//remove field
+db.customer.update({first_name:"joe"}, {$unset:{age:1}});
+
+// if there is no name called Mary then insert 
+db.customer.update(
+    {
+        first_name:"Mary"
+    }, 
+    {
+        first_name:"Mary",
+        last_name:"simth"
+    },
+    {
+        upsert:true
+    }
+);
+
+// rename
+db.customer.update(
+    {
+        first_name: "joe"
+    },
+    {
+        $rename:{"gender":"sex"}
+    }
+);
+
+//remove
+db.customer.remove({first_name: "Marry"});
+
+// remove first data
+db.customer.remove({first_name: "Marry"}, {justOne: true});
+
+
+//sample data insert
+db.customer.insert([
+    {
+        first_name: "eddie",
+        last_name: "choi",
+        membership: ["mem1", "mem2"],
+        address: {
+            street: "4 main street",
+            city: "seoul"
+        },
+        contacts: [
+            {name: "brad", relationship: "friend"},
+        ]
+    },
+    {
+        first_name: "sam",
+        last_name: "kim",
+        membership: ["mem1", "mem2"],
+        address: {
+            street: "4 main street",
+            city: "seoul"
+        },
+        contacts: [
+            {name: "brad", relationship: "friend"},
+        ]
+    },
+    {
+        first_name: "brad",
+        last_name: "jeo",
+        membership: ["mem1", "mem2"],
+        address: {
+            street: "4 main street",
+            city: "seoul"
+        },
+        contacts: [
+            {name: "brad", relationship: "friend"},
+        ]
+    }   
+
+]);
+
+
+// find with query
+db.customer.find(
+    {first_name:"brad"}
+);
+
+db.customer.find(
+    {$or:[{first_name:"brad"},{first_name: "eddie"}]}
+);
+
+// less than
+db.customer.find({age:{$lt:40}});
+
+// greater than
+db.customer.find({age:{$gt:40}});
+
+// less than equal to
+db.customer.find({age:{$lte:40}});
+
+// greater than equal to
+db.customer.find({age:{$gte:40}});
+
+
+
+//find object in object
+db.customer.find({"address.city": "seoul"});
+
+
+
+
+//find object in an array
+db.customer.find({membership: "mem1"});
+
+
+// sort         1: ascending order     -1: descending order
+db.customer.find().sort({last_name: 1}).pretty();
+
+
+//counting
+db.customer.find().count();
+
+db.customer.find({gender: "male"}).count();
+
+
+// find the first 4
+db.customer.find().limit(4);
+
+
+// iteration
+db.customer.find().forEach(
+    function(doc){print("Custmomer Name: "+doc.first_name)}
+    );
+
+db.customer.find().forEach( doc => {
+    print(`${doc.first_name} hello`);
+})
+
+
+
+
+
+
+
+
+
